@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.seunome.coffeefocus",
+      "bundleIdentifier": "com.seuusuario.coffeefocus",
       "icon": "./assets/garden/arvore.png"
     },
     "android": {
@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/garden/arvore.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.seunome.coffeefocus",
+      "package": "com.seuusuario.coffeefocus",
       "edgeToEdgeEnabled": true
     },
     "web": {
