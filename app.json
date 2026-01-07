@@ -4,26 +4,29 @@
     "slug": "CoffeeFocus",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/garden/arvore.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/garden/arvore.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.seunome.coffeefocus",
+      "icon": "./assets/garden/arvore.png"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/garden/arvore.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.seunome.coffeefocus",
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/garden/arvore.png"
     },
     "plugins": [
       "expo-font",
