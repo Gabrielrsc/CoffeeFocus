@@ -7,11 +7,12 @@ import {
   TouchableOpacity, 
   TextInput, 
   SafeAreaView,
-  ScrollView 
+  ScrollView,
+  Alert 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS } from '../styles/theme';
-import { AboutModal } from './AboutModal'; // Certifica-te de que o arquivo existe
+import { AboutModal } from './AboutModal';
 
 export const SettingsModal = ({ 
   visivel, 
@@ -29,7 +30,6 @@ export const SettingsModal = ({
   const [som, setSom] = useState(somAtivo);
   const [modalAboutVisivel, setModalAboutVisivel] = useState(false);
 
-  // Sincroniza os estados locais com as props quando o modal abre
   useEffect(() => {
     if (visivel) {
       setFoco((temposAtuais.foco / 60).toString());
@@ -48,6 +48,41 @@ export const SettingsModal = ({
       },
       somHabilitado: som
     });
+    Alert.alert("Sucesso", "Configurações salvas!");
+  };
+
+  // FUNÇÕES DE CONFIRMAÇÃO PARA A ZONA DE PERIGO
+  const confirmarExclusaoHistorico = () => {
+    Alert.alert(
+      "Limpar Histórico",
+      "Deseja apagar todos os registros de sessões passadas?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Excluir", style: "destructive", onPress: onExcluirHistorico }
+      ]
+    );
+  };
+
+  const confirmarExclusaoTarefas = () => {
+    Alert.alert(
+      "Limpar Tarefas",
+      "Isso removerá todas as suas tarefas criadas. Continuar?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Excluir", style: "destructive", onPress: onExcluirTarefas }
+      ]
+    );
+  };
+
+  const confirmarResetTotal = () => {
+    Alert.alert(
+      "RESTAURAÇÃO DE FÁBRICA",
+      "ATENÇÃO: Isso apagará seu XP, Grãos, Tarefas e Histórico. O app voltará ao estado original. Confirmar?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "RESTAURAR TUDO", style: "destructive", onPress: onResetTotal }
+      ]
+    );
   };
 
   return (
@@ -62,12 +97,8 @@ export const SettingsModal = ({
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           
-          {/* SEÇÃO: APRENDIZADO */}
           <Text style={styles.sectionLabel}>APRENDIZADO</Text>
-          <TouchableOpacity 
-            style={styles.btnAbout} 
-            onPress={() => setModalAboutVisivel(true)}
-          >
+          <TouchableOpacity style={styles.btnAbout} onPress={() => setModalAboutVisivel(true)}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View style={styles.iconCircle}>
                 <Ionicons name="book-outline" size={20} color={COLORS.foco} />
@@ -79,7 +110,6 @@ export const SettingsModal = ({
 
           <View style={styles.divider} />
 
-          {/* SEÇÃO: TEMPOS */}
           <Text style={styles.sectionLabel}>TEMPOS PADRÃO (MINUTOS)</Text>
           <View style={styles.row}>
             <View style={styles.inputGroup}>
@@ -98,7 +128,6 @@ export const SettingsModal = ({
 
           <View style={styles.divider} />
 
-          {/* SEÇÃO: PREFERÊNCIAS (SOM) */}
           <Text style={styles.sectionLabel}>PREFERÊNCIAS</Text>
           <TouchableOpacity 
             style={[styles.soundButton, !som && { opacity: 0.7 }]} 
@@ -118,23 +147,23 @@ export const SettingsModal = ({
             </View>
           </TouchableOpacity>
 
-          {/* SEÇÃO: ZONA DE PERIGO */}
+          {/* SEÇÃO: ZONA DE PERIGO ATUALIZADA */}
           <View style={styles.dangerZone}>
             <Text style={styles.dangerTitle}>ZONA DE PERIGO</Text>
             
             <View style={styles.dangerRow}>
-              <TouchableOpacity style={styles.btnDangerSmall} onPress={onExcluirHistorico}>
+              <TouchableOpacity style={styles.btnDangerSmall} onPress={confirmarExclusaoHistorico}>
                 <Ionicons name="calendar-outline" size={18} color="#e74c3c" />
                 <Text style={styles.textExcluir}>HISTÓRICO</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.btnDangerSmall} onPress={onExcluirTarefas}>
+              <TouchableOpacity style={styles.btnDangerSmall} onPress={confirmarExclusaoTarefas}>
                 <Ionicons name="list-outline" size={18} color="#e74c3c" />
                 <Text style={styles.textExcluir}>TAREFAS</Text>
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.btnResetTotal} onPress={onResetTotal}>
+            <TouchableOpacity style={styles.btnResetTotal} onPress={confirmarResetTotal}>
               <Ionicons name="refresh-circle-outline" size={22} color="#fff" />
               <Text style={styles.textReset}>RESTAURAR DEFINIÇÕES DE FÁBRICA</Text>
             </TouchableOpacity>
@@ -145,7 +174,6 @@ export const SettingsModal = ({
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Modal de Explicação chamando separadamente */}
         <AboutModal 
           visivel={modalAboutVisivel} 
           fechar={() => setModalAboutVisivel(false)} 
@@ -154,6 +182,8 @@ export const SettingsModal = ({
     </Modal>
   );
 };
+
+// ... Mantenha seus estilos iguais ao que você enviou ...
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.branco },

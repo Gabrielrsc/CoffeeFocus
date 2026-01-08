@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { COLORS, FONTS } from '../styles/theme';
+import { Ionicons } from '@expo/vector-icons';
 
-export const CoffeeGarden = ({ xp }) => {
+export const CoffeeGarden = ({ xp, onPress }) => {
   // Lógica de evolução baseada em XP (0 a 100)
   const getStatusCrescimento = () => {
     if (xp < 25) {
@@ -25,7 +26,7 @@ export const CoffeeGarden = ({ xp }) => {
       };
     } else {
       return { 
-        fase: "Pronto p/ Colheita", 
+        fase: xp >= 100 ? "Pronto para Colher!" : "Árvore de Café", 
         img: require('../../assets/garden/arvore.png'), 
         cor: "#4caf50" 
       };
@@ -33,26 +34,37 @@ export const CoffeeGarden = ({ xp }) => {
   };
 
   const status = getStatusCrescimento();
+  const podeColher = xp >= 100;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        {/* Visual da Planta Miniatura */}
-        <View style={[styles.imageWrapper, { backgroundColor: status.cor + '15' }]}>
+    <TouchableOpacity 
+      style={styles.container} 
+      onPress={onPress} 
+      activeOpacity={0.8}
+    >
+      <View style={[styles.card, podeColher && styles.cardPronto]}>
+        
+        {/* LADO ESQUERDO: IMAGEM DA PLANTA */}
+        <View style={[styles.imageWrapper, { backgroundColor: status.cor + '20' }]}>
           <Image 
             source={status.img} 
             style={styles.plantImage} 
             resizeMode="contain" 
           />
+          {podeColher && (
+            <View style={styles.badgeAlerta}>
+              <Ionicons name="sparkles" size={12} color="#fff" />
+            </View>
+          )}
         </View>
 
-        {/* Info de Experiência */}
+        {/* CENTRO: BARRA DE PROGRESSO E XP */}
         <View style={styles.infoWrapper}>
           <View style={styles.textRow}>
-            <Text style={styles.labelFase}>{status.fase.toUpperCase()}</Text>
-            <View style={styles.xpBadge}>
-                <Text style={styles.labelXP}>{xp} XP</Text>
-            </View>
+            <Text style={[styles.labelFase, podeColher && { color: status.cor }]}>
+              {status.fase.toUpperCase()}
+            </Text>
+            <Text style={styles.labelXP}>{xp} / 100 XP</Text>
           </View>
           
           <View style={styles.progressBarBackground}>
@@ -63,87 +75,113 @@ export const CoffeeGarden = ({ xp }) => {
               ]} 
             />
           </View>
-          <Text style={styles.helperText}>Toque para ver a evolução</Text>
+          <Text style={styles.helperText}>
+            {podeColher ? "Colheita disponível! Toque aqui." : "Foque para evoluir sua planta"}
+          </Text>
+        </View>
+
+        {/* LADO DIREITO: ÍCONE DE AÇÃO (ESTILO WIDGET) */}
+        <View style={[styles.actionButton, { backgroundColor: status.cor }]}>
+          <Ionicons 
+            name={podeColher ? "basket" : "leaf"} 
+            size={20} 
+            color="#fff" 
+          />
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginTop: 15,
-    marginBottom: 5,
+    width: '100%', // Garante que o botão ocupe toda a largura disponível
+    marginVertical: 8,
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 20,
-    padding: 12,
+    backgroundColor: '#ffffff',
+    borderRadius: 30, // Arredondamento idêntico ao card do relógio
+    padding: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  cardPronto: {
+    borderColor: '#4caf50',
+    borderWidth: 1.5,
   },
   imageWrapper: {
-    width: 45,
-    height: 45,
-    borderRadius: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 14,
   },
   plantImage: {
-    width: 32,
-    height: 32,
+    width: 75,
+    height: 75,
+  },
+  badgeAlerta: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#FFD700',
+    borderRadius: 10,
+    padding: 3,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   infoWrapper: {
     flex: 1,
+    marginRight: 12,
   },
   textRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   labelFase: {
+    fontFamily: FONTS.mono,
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: COLORS.textoEscuro,
+  },
+  labelXP: {
     fontFamily: FONTS.mono,
     fontSize: 10,
     fontWeight: 'bold',
     color: COLORS.textoEscuro,
-  },
-  xpBadge: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  labelXP: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    fontWeight: 'bold',
-    color: COLORS.textoEscuro,
+    opacity: 0.4,
   },
   progressBarBackground: {
-    height: 6,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 3,
+    height: 10,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 5,
     overflow: 'hidden',
   },
   progressBarActive: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 5,
   },
   helperText: {
     fontFamily: FONTS.mono,
-    fontSize: 8,
+    fontSize: 9,
     color: COLORS.textoEscuro,
-    opacity: 0.3,
-    marginTop: 4,
-    textAlign: 'right'
+    opacity: 0.4,
+    marginTop: 6,
+  },
+  actionButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
   },
 });
